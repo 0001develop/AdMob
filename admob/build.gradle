@@ -1,0 +1,60 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.0001develop'
+def adMobPropertiesFile = rootProject.file("keystore.properties")//file("admob.properties")
+def adMobProperties = new Properties()
+adMobProperties.load(new FileInputStream(adMobPropertiesFile))
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            resValue "string", "admob_banner_id", adMobProperties['ADMOB_BANNER_ID']
+            buildConfigField "String", "ADMOB_BANNER_ID", "\"${adMobProperties['ADMOB_BANNER_ID']}\""
+            resValue "string", "admob_interstitial_id", adMobProperties['ADMOB_INTERSTITIAL_ID']
+            buildConfigField "String", "ADMOB_INTERSTITIAL_ID", "\"${adMobProperties['ADMOB_INTERSTITIAL_ID']}\""
+            resValue "string", "admob_app_id", adMobProperties['ADMOB_APP_ID']
+            buildConfigField "String", "ADMOB_APP_ID", "\"${adMobProperties['ADMOB_APP_ID']}\""
+            manifestPlaceholders.ADMOB_APP_ID = adMobProperties['ADMOB_APP_ID']
+        }
+        debug {
+            resValue "string", "admob_banner_id", adMobProperties['ADMOB_BANNER_TEST']
+            buildConfigField "String", "ADMOB_BANNER_ID", "\"${adMobProperties['ADMOB_BANNER_TEST']}\""
+            resValue "string", "admob_interstitial_id", adMobProperties['ADMOB_INTERSTITIAL_TEST']
+            buildConfigField "String", "ADMOB_INTERSTITIAL_ID", "\"${adMobProperties['ADMOB_INTERSTITIAL_TEST']}\""
+            resValue "string", "admob_app_id", adMobProperties['ADMOB_APP_ID_TEST']
+            buildConfigField "String", "ADMOB_APP_ID", "\"${adMobProperties['ADMOB_APP_ID_TEST']}\""
+            manifestPlaceholders.ADMOB_APP_ID = adMobProperties['ADMOB_APP_ID_TEST']
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.core:core-ktx:1.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    api 'com.google.android.gms:play-services-ads:18.2.0'
+}
